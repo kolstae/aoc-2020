@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(def input (slurp (io/resource "day1.txt")))
+(def input (-> (.getName *ns*) (str ".txt") io/resource slurp))
 
 (defn parse-input [s]
   (->> (str/split-lines s)
