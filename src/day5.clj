@@ -4,18 +4,10 @@
 
 (def input (-> (.getName *ns*) (str ".txt") io/resource slurp))
 
-(defn bin-str [u-ch max cs]
-  (first (reduce (fn [[min max] ch]
-                   (let [d (/ (- max min) 2)]
-                     (if (= ch u-ch)
-                       [(+ min d) max]
-                       [min (- max d)])))
-                 [0 max]
-                 cs)))
-
 (defn parse-ticket [s]
-  (let [row (bin-str \B 128 (take 7 s))
-        col (bin-str \R 8 (drop 7 s))]
+  (let [s (replace {\B \1 \R \1 \F \0 \L \0} s)
+        row (Integer/parseInt (apply str (take 7 s)) 2)
+        col (Integer/parseInt (apply str (drop 7 s)) 2)]
     [row col (+ (* 8 row) col)]))
 
 (defn parse-input [s]
