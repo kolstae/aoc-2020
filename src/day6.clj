@@ -1,17 +1,19 @@
 (ns day6
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.set :as set]))
 
 (def input (-> (.getName *ns*) (str ".txt") io/resource slurp))
 
 (defn parse-input [s]
   (str/split s #"\n\n"))
 
-(defn qs [ss] (filter #(<= (int \a) (int %) (int \z)) ss))
+(defn q-set [ss] (set (filter #(<= (int \a) (int %) (int \z)) ss)))
 
 (defn part-1 [s]
   (->> (parse-input s)
-       (map (comp count set qs))
+       (map q-set)
+       (map count)
        (reduce +)))
 
 (comment
@@ -21,10 +23,9 @@
 ;6351
 
 (defn all-yes [s]
-  (let [cnt (count (str/split-lines s))]
-    (->> (qs s)
-         (frequencies)
-         (filter (comp #{cnt} val)))))
+  (->> (str/split-lines s)
+       (map q-set)
+       (apply set/intersection)))
 
 (defn part-2 [s]
   (->> (parse-input s)
