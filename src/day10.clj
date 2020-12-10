@@ -29,11 +29,11 @@
 (defn part-2 [s]
   (let [js (parse-input s)
         ds (->> (partition 2 1 js)
-                (map #(apply - (reverse %))))
-        ds (partition-by (fn [[d1 _ d2]] (max d1 d2)) (next (map vector (cons 1 ds) js ds)))]
+                (map #(apply - (reverse %)))
+                (partition-by identity))]
     (->> ds
-         (filter (fn [[[d1 _ d2]]] (= 1 (max d1 d2))))
-         (map (comp {1 2 2 4 3 7} count))
+         (filter (fn [[d]] (= 1 d)))
+         (map (comp {1 1 2 2 3 4 4 7} count))
          (apply *))))
 
 (comment
