@@ -14,8 +14,8 @@
   (case (if (= op \F) dir op)
     \N (update state :y - d)
     \S (update state :y + d)
-    \E (update state :x - d)
-    \W (update state :x + d)
+    \W (update state :x - d)
+    \E (update state :x + d)
     \L (assoc state :dir (->> dirs reverse cycle (drop-while #(not= % dir)) (drop (/ d 90)) first))
     \R (assoc state :dir (->> dirs cycle (drop-while #(not= % dir)) (drop (/ d 90)) first))))
 
