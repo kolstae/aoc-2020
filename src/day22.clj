@@ -1,9 +1,6 @@
 (ns day22
   (:require [clojure.java.io :as io]
-            [clojure.string :as str])
-  (:import (java.util ArrayDeque Collection HashSet)))
-
-(set! *warn-on-reflection* true)
+            [clojure.string :as str]))
 
 (def input (-> (.getName *ns*) (str ".txt") io/resource slurp))
 
@@ -36,26 +33,20 @@
   (part-1 input))
 ;34566
 
-(defn compressed [as bs]
-  (->> (concat as bs)
-       (partition-all 10)
-       (mapv (fn [ns] (reduce (fn [n x] (bit-or (bit-shift-left n 6) x)) ns)))))
-
 (defn play-combat-2 [as bs]
-  (let [as (ArrayDeque. ^Collection as) bs (ArrayDeque. ^Collection bs) seen (HashSet.)]
-    (while (not (or (.isEmpty as) (.isEmpty bs)))
-      (let [cs (compressed as bs)]
-        (if (.add seen cs)
-          (let [a (.pop as)
-                b (.pop bs)]
-            (if (if (and (<= a (.size as))
-                         (<= b (.size bs)))
-                  (first (play-combat-2 as bs))
-                  (> a b))
-              (do (.addLast as a) (.addLast as b))
-              (do (.addLast bs b) (.addLast bs a))))
-          (.clear as))))
-    [(seq as) (seq bs)]))
+  (loop [as as bs bs seen #{}]
+    (cond
+      (contains? seen as) [as nil]
+      (and (seq as) (seq bs)) (let [seen (conj seen as)
+                                    [a & as] as
+                                    [b & bs] bs]
+                                (if (if (and (<= a (count as))
+                                             (<= b (count bs)))
+                                      (first (play-combat-2 (take a as) (take b bs)))
+                                      (> a b))
+                                  (recur (conj (vec as) a b) bs seen)
+                                  (recur as (conj (vec bs) b a) seen)))
+      :else [as bs])))
 
 (defn part-2 [s]
   (let [[as bs] (parse-input s)]
@@ -69,4 +60,4 @@
   (part-2 "Player 1:\n9\n2\n6\n3\n1\n\nPlayer 2:\n5\n8\n4\n7\n10")
 
   (part-2 input))
-;
+;31854
